@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour {
 	public int level;							//Determines what level to load
 	public int loadTime;						//time the loading screen remains active
 	public GameObject hpUI;						//playerHealth object
+	public Player player;						//player object (for reference)
+	public list<Enemy> enemies;					//object to store enemies
 	// Use this for initialization
 	void Start() {
 		if (instance == null)
@@ -61,6 +63,10 @@ public class GameManager : MonoBehaviour {
 			loading = false;
 		}
 		
+		if(player.checkIfGameOver()){
+			loading = true;
+			loadText.text = "Game Over";
+		}
 		if(loading){
 			hpUI.SetActive(false);
 			loadImage.SetActive(true);

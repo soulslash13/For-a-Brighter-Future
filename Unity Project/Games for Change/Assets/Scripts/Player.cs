@@ -6,6 +6,7 @@ public class Player : MovingObj {
 	private Animator animator;
 	public AudioClip moveSound;
 	public AudioClip hitSound;
+	public AudioClip damageSound;
 	private int coolDown;
 	private int lastAction;
 	private int hitDir;
@@ -56,6 +57,7 @@ public class Player : MovingObj {
 				SoundManager.instance.stopSound();
 				SoundManager.instance.playSound(hitSound);
 				coolDown = 15;
+				
 				if(animator.GetBool("movingRight")){
 					hitDir = 2;
 				}else if(animator.GetBool("movingLeft")){
@@ -98,13 +100,29 @@ public class Player : MovingObj {
 	}
 	
 	public int getHit(){
-		return hitDir;
+		return(hitDir);
+	}
+	
+	public int getDirection(){
+		int Dir;
+		if(animator.GetBool("movingRight")){
+			Dir = 2;
+		}else if(animator.GetBool("movingLeft")){
+			Dir = 1;
+		}else if(animator.GetBool("movingUp")){
+			Dir = 3;
+		}else if(animator.GetBool("movingDown")){
+			Dir = 4;
+		}else{
+			Dir = 0;
+		}
+		return(Dir);
 	}
 	
 	 private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "Enemy"){
-            hp -= 1;
+            this.removeHealth(1);
         }else if(other.tag == "FactoryExit"){
 			GameManager.instance.setLoadTime(120);
 			GameManager.instance.setLevel(2);
@@ -125,6 +143,22 @@ public class Player : MovingObj {
 	
 	public void removeHealth(int amount){ //allows removal of health, capped at 0
 		hp -= amount;
+		int dir = this.getDirection();
+		switch (dir){
+			case 1: animator.SetTrigger("hitLeft");
+					break;
+			case 2: animator.SetTrigger("hitRight");
+					break;
+			case 3: animator.SetTrigger("hitUp");
+					break;
+			case 4: animator.SetTrigger("hitDown");
+					break;
+			default:animator.SetTrigger("hitDown");
+					break;
+		}
+		SoundManager.instance.stopSound();
+		SoundManager.instance.playSound(damageSound);
+		coolDown = 30;
 		if(hp < 0){
 			hp = 0;
 		}

@@ -27,54 +27,53 @@ public class Enemy : MovingObj {
 	
 	// Update is called once per frame
 	void Update () {
-		
-
         int moveH = 0; //Horizontal value
         int moveV = 0; //Vertical value
 		float thrust = 7f;
-			
-		if(dmgCoolDown <= 0){
-			takeDamage();
-		}
 		
-		if(health < 1){
-			Destroy(gameObject);
-		}
-		
-		if(coolDown > -30){
-			coolDown -=1;
-		}
-		if(dmgCoolDown > 0){
-			dmgCoolDown -= 1;
-		}
-		if(coolDown <= 0){
-			hitBox.SetActive(false);
-			targetX = GameObject.FindGameObjectWithTag("Player").transform.position.x;
-			targetY = GameObject.FindGameObjectWithTag("Player").transform.position.y;
-			if(!canHit()){
-				if(playerNear()){
-					if(GetComponent<Rigidbody2D>().position.y > targetY){
-						moveV = -1;
-					}else{
-						moveV = 1;
-					}
-					if(GetComponent<Rigidbody2D>().position.x > targetX){
-						moveH = -1;
-					}else{
-						moveH = 1;
-					}
-					if(moveH != 0 || moveV != 0){
-						SoundManager.instance.playSound(moveSound);
-					}
-				}	
-			}else{
-				hitPlayer();
-				
+		if(!GameManager.instance.isLoading()){
+			if(dmgCoolDown <= 0){
+				takeDamage();
 			}
-			animateEnemy(moveH, moveV);
-			base.Move(moveH,moveV, thrust);
+			
+			if(health < 1){
+				Destroy(gameObject);
+			}
+			
+			if(coolDown > -30){
+				coolDown -=1;
+			}
+			if(dmgCoolDown > 0){
+				dmgCoolDown -= 1;
+			}
+			if(coolDown <= 0){
+				hitBox.SetActive(false);
+				targetX = GameObject.FindGameObjectWithTag("Player").transform.position.x;
+				targetY = GameObject.FindGameObjectWithTag("Player").transform.position.y;
+				if(!canHit()){
+					if(playerNear()){
+						if(GetComponent<Rigidbody2D>().position.y > targetY){
+							moveV = -1;
+						}else{
+							moveV = 1;
+						}
+						if(GetComponent<Rigidbody2D>().position.x > targetX){
+							moveH = -1;
+						}else{
+							moveH = 1;
+						}
+						if(moveH != 0 || moveV != 0){
+							SoundManager.instance.playSound(moveSound);
+						}
+					}	
+				}else{
+					hitPlayer();
+					
+				}
+				animateEnemy(moveH, moveV);
+				base.Move(moveH,moveV, thrust);
+			}
 		}
-		
 			
 	}
 	void takeDamage(){
