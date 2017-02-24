@@ -2,9 +2,9 @@
 using System.Collections;
 
 public class SoundManager : MonoBehaviour {
-	public AudioSource sfx;
-	public AudioSource musicSource;
-	public static SoundManager instance = null;
+	public AudioSource sfx;	//sound effects source
+	public AudioSource musicSource;	//music loop source
+	public static SoundManager instance = null;	//used to destroy copies of sound manager
 	
 	// Use this for initialization
 	void Awake () {
@@ -24,14 +24,14 @@ public class SoundManager : MonoBehaviour {
 		}
 	}
 	
-	public void stopSound(){
+	public void stopSound(){	//stops current audio
 		sfx.Stop();
 	}
-	public void changeMusic (AudioClip music){
+	public void changeMusic (AudioClip music){	//changes the looping music
 		musicSource.clip = music;
 	}
 	
-	public bool isBusy(){
+	public bool isBusy(){	//determines if the audio source is already playing a sound
 		if(sfx.isPlaying){
 			return true;
 		}

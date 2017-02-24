@@ -14,18 +14,17 @@ public class GameManager : MonoBehaviour {
 	public int loadTime;						//time the loading screen remains active
 	public GameObject hpUI;						//playerHealth object
 	public Player player;						//player object (for reference)
-	public list<Enemy> enemies;					//object to store enemies
 	// Use this for initialization
-	void Start() {
-		if (instance == null)
+	void Start() {	//destroys any new game-managers created
+		if (instance == null)	
             instance = this;
         else if (instance != null)
             Destroy(gameObject);
-
         DontDestroyOnLoad (gameObject);
+		levelChanged = true;
 		beginGame();
 	}
-	void beginGame(){
+	void beginGame(){	//starts if this is the first instance of game-manager created
 		level = 1;
 		loading = true;
 		loadTime = 120;
@@ -38,39 +37,41 @@ public class GameManager : MonoBehaviour {
 		load();
 	}
 	
-	public bool isLoading(){
+	public bool isLoading(){ //determines if the game is loading
 		if(loading){
 			return true;
 		}
 		return false;
 	}
-	public int getLevel(){
+	public int getLevel(){	//returns current level(used as a directory for the map to be displayed, not progression)
 		return level;
 	}
-	public void setLevel(int newLevel){
+	
+	public void setLevel(int newLevel){	//changes the current level. Causes the background to change and enemies to update to new positions
 		level = newLevel;
 	}
 	
-	public void setLoadTime(int newLoadTime) {
+	public void setLoadTime(int newLoadTime) {	//used to change the current loading time
 		loadTime =  newLoadTime;
 	}
 	
-	private void load(){
-		if(loadTime > 0){
+	private void load(){	//runs the loading screen and game over screen.  Manages loading times
+		if(loadTime > 0){	//updates loading time and tells the game it is loading currently
 			loadTime -= 1;
 			loading = true;
-		}else if(loadTime == 0){
+		}else if(loadTime == 0){	//tells the game if it is done loading
 			loading = false;
 		}
 		
-		if(player.checkIfGameOver()){
+		if(player.checkIfGameOver()){	//checks for game over, if true it locks a loading screen and titles it "Game Over"
 			loading = true;
 			loadText.text = "Game Over";
 		}
-		if(loading){
+		
+		if(loading){	//updates UI if the game is loading and activates loading screen
 			hpUI.SetActive(false);
 			loadImage.SetActive(true);
-		}else{
+		}else{	//updates UI if the game is loading and deactivates loading screen
 			loadImage.SetActive(false);
 			hpUI.SetActive(true);
 		}

@@ -13,41 +13,37 @@ public class MovingObj : MonoBehaviour {
         boxCollider = GetComponent<BoxCollider2D>();
         rb = GetComponent<Rigidbody2D>();
 	}
-	public void setRigidBody(Rigidbody2D newRb){
+	public void setRigidBody(Rigidbody2D newRb){ //used to find a specific objects rb2d
 		rb = newRb;
 	}
-	protected void Move(int x, int y, float newThrust){
+	protected void Move(int x, int y, float newThrust){ //basic movement of an object
 			float thrust = newThrust;
 			float stop = 0f;
 			
-			
-			if(x > 0){
+			if(x > 0){ //horizontal thrust
 				rb.AddForce(transform.right * thrust);
 			}else if(x < 0){
 				rb.AddForce(transform.right * -thrust);
 			}
-			if(y > 0){
+			if(y > 0){	//vertical thrust
 				rb.AddForce(transform.up * thrust);
 			}else if(y < 0){
 				rb.AddForce(transform.up * -thrust);
 			}
 	}
-	public void quickMove(int x, int y){
+	
+	public void quickMove(int x, int y){		//teleportation of an object. Moves to given coordinate
 		Vector3 newpos = new Vector3(x, y);
 		rb.MovePosition(newpos);
 	}
 	
-	public float getX(){
+	public float getX(){	//returns objects current x value
 		float x = GetComponent<Rigidbody2D>().position.x;
 		return x;
 	}
 	
-	public float getY(){
+	public float getY(){	//returns objects current y value
 		float y = GetComponent<Rigidbody2D>().position.y;
 		return y;
-	}
-	
-	protected void changePosition(int newX, int newY){
-		
 	}
 }

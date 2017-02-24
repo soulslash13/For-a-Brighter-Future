@@ -3,20 +3,14 @@ using System.Collections;
 
 public class Player : MovingObj {
 	public int hp;
-	private Animator animator;
-	public AudioClip moveSound;
-	public AudioClip hitSound;
-	public AudioClip damageSound;
-	private int coolDown;
-	private int lastAction;
-	private int hitDir;
-	public bool loading;
-	public GameObject topHitBox;
-	public GameObject bottomHitBox;
-	public GameObject leftHitBox;
-	public GameObject rightHitBox;
-	int lastMoveV; //stores the last direction moved
-	int lastMoveH; //stores the last direction moved
+	private Animator animator;	//player animation
+	public AudioClip moveSound;	//player dessert moving sound
+	public AudioClip hitSound;	//player attack sound
+	public AudioClip damageSound;	//player damaged sound
+	private int coolDown;	//cooldown for attacking action
+	private int lastAction;	//determines if the last action was movement or attacking.  Used for audio
+	private int hitDir;		//determines which direction the player is attacking. Used by enemies to detect if they have been hit
+	public bool loading;	//determines if the game is currently loading
 	//last Action format
 	/**
 	1 = move
@@ -26,13 +20,7 @@ public class Player : MovingObj {
 	// Use this for initialization
 	protected override void Start () {
 		hitDir = 0;
-		topHitBox.SetActive(false);
-		bottomHitBox.SetActive(false);
-		leftHitBox.SetActive(false);
-		rightHitBox.SetActive(false);
 		animator = GetComponent<Animator>();
-		lastMoveV = -1;
-		lastMoveH = 0;
 		hp = 6;
 		coolDown = 0;
 		lastAction = 1;
@@ -51,14 +39,14 @@ public class Player : MovingObj {
 			int moveV = 0; //Vertical value
 			bool hit = false; //determines if the player is hitting
 			
-			if(Input.GetKey("space") && coolDown <= -30){
+			if(Input.GetKey("space") && coolDown <= -30){	//uses attack action
 				animator.SetTrigger("attack");
 				lastAction = 2;
 				SoundManager.instance.stopSound();
 				SoundManager.instance.playSound(hitSound);
 				coolDown = 15;
 				
-				if(animator.GetBool("movingRight")){
+				if(animator.GetBool("movingRight")){	//directional attacking
 					hitDir = 2;
 				}else if(animator.GetBool("movingLeft")){
 					hitDir = 1;
@@ -71,23 +59,22 @@ public class Player : MovingObj {
 				}
 			}
 			
-			if(coolDown > -30){
+			if(coolDown > -30){	//updates current cooldown time
 				coolDown -=1;
 			}
-			if(coolDown <= 0){
+			
+			if(coolDown <= 0){	//only allows player to move after cooldown time is finished. (.5seconds after 1 hit)
 				hitDir = 0;
 		
-				moveH = (int)Input.GetAxisRaw("Horizontal");
-				moveV = (int)Input.GetAxisRaw("Vertical");
+				moveH = (int)Input.GetAxisRaw("Horizontal");	//horizontal keyboard input
+				moveV = (int)Input.GetAxisRaw("Vertical");		//vertical keyboard input
 			
-				if(moveH != 0 || moveV != 0){
-					if(lastAction != 1){
+				if(moveH != 0 || moveV != 0){	//detects if any movement input has been received
+					if(lastAction != 1){	//stops an attacking sound if it is active
 						SoundManager.instance.stopSound();
 						lastAction = 1;
 					}
-					SoundManager.instance.playSound(moveSound);
-					lastMoveV = moveV;
-					lastMoveH = moveH;
+					SoundManager.instance.playSound(moveSound);	//plays the movement sound and saves the last movement data
 				}
 				
 				
@@ -99,11 +86,11 @@ public class Player : MovingObj {
 		}
 	}
 	
-	public int getHit(){
+	public int getHit(){	//returns direction the player is attacking
 		return(hitDir);
 	}
 	
-	public int getDirection(){
+	public int getDirection(){	//returns the direction the player is facing
 		int Dir;
 		if(animator.GetBool("movingRight")){
 			Dir = 2;
@@ -119,15 +106,15 @@ public class Player : MovingObj {
 		return(Dir);
 	}
 	
-	 private void OnTriggerEnter2D(Collider2D other)
+	 private void OnTriggerEnter2D(Collider2D other)	//determines if the player has entered a hit box, and then what it was
     {
-        if (other.tag == "Enemy"){
+        if (other.tag == "Enemy"){	//player touched an enemy
             this.removeHealth(1);
-        }else if(other.tag == "FactoryExit"){
+        }else if(other.tag == "FactoryExit"){	//player touched the factory exit door
 			GameManager.instance.setLoadTime(120);
 			GameManager.instance.setLevel(2);
 			base.quickMove(0,21);
-		}else if(other.tag == "FactoryEntrance"){
+		}else if(other.tag == "FactoryEntrance"){	//player entered the factory entrance door
 			GameManager.instance.setLoadTime(120);
 			GameManager.instance.setLevel(1);
 			base.quickMove(1,2);
